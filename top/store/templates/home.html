@@ -1,0 +1,54 @@
+{% extends 'base_layout.html' %}
+{% load category %}
+
+{% block slider %}
+<div class="container-slide">
+  <div id="carousel-demo" class="carousel">
+    {% for slide in slides %}
+    <div class="item-1">
+      <img class="slider-img" src="{{ slide.image.url }}" alt="">
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="columns is-2">
+  <div class="column is-one-fifth">
+    {% categories %}
+  </div>
+  <div class="column">
+    <div class="columns is-multiline is-centered">
+      {% for product in products %}
+      <div class="column is-4">
+        <div class="card">
+          <div class="card-image">
+
+                <img src="{{ product.image.url }}" alt="">
+
+            {% if product.is_new %}
+              <span class="tag is-danger">Новинка</span>
+            {% endif %}
+            {% if product.is_discounted %}
+              <span class="tag is-primary">Скидка</span>
+            {% endif %}
+          </div>
+          <div class="card-content">
+            <div class="media">
+              <br>
+              <div class="media-content">
+                <div class="title is-4">{{product}}</div>
+              </div>
+            </div>
+            <div class="content has-text-weight-bold">
+              {{product.price}} рублей
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
