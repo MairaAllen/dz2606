@@ -27,6 +27,7 @@ class Product(models.Model):
     is_discounted = models.BooleanField(verbose_name='скидка')
     category = models.ForeignKey('store.Category', on_delete=models.CASCADE, verbose_name='Категория')
     brand = models.ForeignKey('store.Brand',  on_delete=models.CASCADE, verbose_name='Брэнд')
+    image = models.ImageField(default='default.png')
 
     def __str__(self):
         return self.name

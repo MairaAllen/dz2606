@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="columns is-2">
+<div class="columns mt-2">
   <div class="column is-one-fifth">
     {% categories %}
   </div>
@@ -24,25 +24,37 @@
       <div class="column is-4">
         <div class="card">
           <div class="card-image">
-
+            <a href="{% url 'store:product' product.pk %}">
+              <figure class="image">
                 <img src="{{ product.image.url }}" alt="">
-
-            {% if product.is_new %}
-              <span class="tag is-danger">Новинка</span>
-            {% endif %}
-            {% if product.is_discounted %}
-              <span class="tag is-primary">Скидка</span>
-            {% endif %}
+              </figure>
+            </a> 
           </div>
           <div class="card-content">
             <div class="media">
               <br>
               <div class="media-content">
-                <div class="title is-4">{{product}}</div>
+                <div class="title is-4">
+                  {{product}}
+                  {% if product.is_new %}
+                  <span class="tag is-danger">Новинка</span>
+                  {% endif %}
+                </div>
               </div>
             </div>
-            <div class="content has-text-weight-bold">
-              {{product.price}} рублей
+            <div class="columns is-vcentered">
+              <div class="column">
+                <div class="content has-text-weight-bold">{{product.price}} рублей
+                  {% if product.is_discounted %}
+                  <span class="tag is-primary">Скидка</span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="column has-text-right">
+                <a href="{% url 'store:home' %}?product={{ product.pk}}">
+                  <ion-icon name="cart-outline" class="order"></ion-icon>
+                </a>
+              </div>
             </div>
           </div>
         </div>

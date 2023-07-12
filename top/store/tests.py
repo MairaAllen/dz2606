@@ -50,3 +50,49 @@ from django.test import TestCase
 # verbose_name - для переименования модели
 # verbose_name_plural - для переименования модели (мн.ч.)
 
+#  <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+#         <div class="navbar-brand has-text-weight-bold has-text-white">
+#           <a class="navbar-item" href="{% url 'store:home' %}">
+#             <ion-icon name="flower-outline"></ion-icon>
+#             YOUR GARDEN
+#             <ion-icon name="flower-outline"></ion-icon>
+#           </a>
+#           <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+#             <span aria-hidden="true"></span>
+#             <span aria-hidden="true"></span>
+#             <span aria-hidden="true"></span>
+#           </a>
+#         </div>
+#         <div id="navbarBasicExample" class="navbar-menu">
+#           <div class="navbar-start">
+#             <a href="{% url 'store:home' %}" class="navbar-item">
+#                 <ion-icon name="home-outline"></ion-icon>
+#             </a>
+#             <div class="navbar-item has-dropdown is-hoverable">
+#               <a class="navbar-link">
+#                 Производители
+#               </a>
+#               <div class="navbar-dropdown">
+#                 <a class="navbar-item">
+#                     {% brands %}
+#                 </a>
+#               </div>
+#             </div>
+#           </div>
+      
+#           <div class="navbar-end">
+#             {% if users.is_authenticated %}
+#             <div class="navbar-item has-dropdown is-hoverable">
+#                 <div class="navbar-link">
+#                     {{ user }}
+#                 </div>
+#                 <div class="navbar-dropdown">
+#                     <a class="navbar-item has-text-danger" 
+#                      href="{% url 'users:sign_out' %}">
+#                         Выйти
+#                     </a>
+#                 </div>
+#             </div>
+#             {% endif %}
+#         </div>
+#       </nav>

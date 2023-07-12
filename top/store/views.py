@@ -11,3 +11,6 @@ def home(request):
     products = products.filter(brand=brand) if brand else products
     return render(request, 'home.html', {'products':products, 'slides':slides})
 
+def product(request, pk):
+    product_data = Product.objects.get(pk=pk)
+    return render(request, 'product.html', {'product':product_data})
