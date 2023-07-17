@@ -29,23 +29,41 @@
     </a>
   </div>
     <div id="navbarBasicExample" class="navbar-menu">
-      <div class="navbar-start">
+      {% csrf_token %}
+      <div class="navbar-start" title="на главную">
             <a href="{% url 'store:home' %}" class="navbar-item">
                 <ion-icon name="home-outline"></ion-icon>
             </a>
             <div class="navbar-item has-dropdown is-hoverable">
               <a class="navbar-link">
-                Производители
+                Каталог
               </a>
               <div class="navbar-dropdown">
                 <a class="navbar-item">
-                  {% brands %}
+                  {% categories %}
                 </a>
               </div>
+            
             </div>
           </div>
+      
         <div class="navbar-end">
+          <span class="navbar-item">
+            <form method="get" action="/store/home/">
+              <div class="field has-addons mt-4">
+                <div class="control">
+                  <input class="input" type="search" name="search">
+                </div>
+                <div class="control">
+                  <button class="button" type="submit"><ion-icon name="search"></ion-icon>
+                </div>
+              </div>
+            </form>
+          </span>
         
+          <a class="navbar-item is-size-3" href="{% url 'store:cart' %}">
+            <ion-icon name="cart-outline"></ion-icon>
+          </a>
           <div class="navbar-item has-dropdown is-hoverable">
             <div class="navbar-link">
               {{ user }}

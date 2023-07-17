@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -39,3 +40,21 @@ class SliderImage(models.Model):
 
     def __str__(self):
         return f"image #{self.pk}"
+    
+class CartItem(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    guest = models.ForeignKey('store.Guest', on_delete=models.CASCADE, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+    def __str__(self):
+        return self.product.name
+    
+    def total_price(self):
+        return self.product.price * self.quantity
+    
+class Guest(models.Model):
+    token = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        db_table = 'guests'

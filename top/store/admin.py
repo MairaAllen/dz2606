@@ -14,5 +14,7 @@ admin.site.register(Product, SlugAdmin)
 admin.site.register(Category)
 admin.site.register(Brand)
 admin.site.register(SliderImage)
+admin.site.register(Guest)
+admin.site.register(CartItem)
 
 

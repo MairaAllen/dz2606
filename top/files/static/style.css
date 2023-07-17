@@ -1,6 +1,6 @@
-.continer-slide {
+.container-slide {
     max-width: 100% !important;
-    height: 50px;
+    height: 50vh;
     overflow: hidden;
     margin: 0;
     border-radius: 10px;

@@ -1,5 +1,5 @@
 {% extends 'base_layout.html' %}
-{% load category %}
+{% load brand %}
 
 {% block slider %}
 <div class="container-slide">
@@ -16,7 +16,7 @@
 {% block content %}
 <div class="columns mt-2">
   <div class="column is-one-fifth">
-    {% categories %}
+    {% brands %}
   </div>
   <div class="column">
     <div class="columns is-multiline is-centered">
@@ -51,7 +51,7 @@
                 </div>
               </div>
               <div class="column has-text-right">
-                <a href="{% url 'store:home' %}?product={{ product.pk}}">
+                <a href="{% url 'store:guest_register' product.pk %} ">
                   <ion-icon name="cart-outline" class="order"></ion-icon>
                 </a>
               </div>
