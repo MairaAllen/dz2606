@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import *
 from django.http import HttpResponse
-from .forms import OrderForm
+from .forms import OrderForm, RateForm
 from django.contrib.auth.decorators import login_required
 
 
@@ -26,10 +26,21 @@ def home(request):
 def product(request, pk):
     product_data = Product.objects.get(pk=pk)
     action = request.GET.get('action')
+
+#система отзыва
+    form = RateForm(request.POST or None)
+
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.customer = request.user
+        instance.product = product_data
+        instance.save()
+        return redirect('store:product', pk=product_data.pk)
+
     if action:
         favorite(request,pk)
         return redirect('store:product', pk=pk)
-    return render(request, 'product.html', {'product': product_data})
+    return render(request, 'product.html', {'product': product_data, 'form':form})
 
 
 def guest_register(request, pk):
@@ -160,3 +171,10 @@ def favorite_page(request):
         return redirect('store:favorite')
     
     return render(request, 'favorite.html', {'favorites':favorite_products})  
+
+def orders(request):
+    orders_list = Order.objects.filter(customer=request.user)
+    return render(request, 'orders.html', {'orders': orders_list})
+
+
+   

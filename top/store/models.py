@@ -77,6 +77,11 @@ class Order(models.Model):
     def __str__(self):
         return f"Заказ №{self.pk}"
     
+    def order_products_list(self):
+        return', '.join(
+            [f'{order.product.name}  {order.amount} шт' for order in self.order_products.all()]
+        )
+    
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE,related_name='order_products')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -85,5 +90,23 @@ class OrderProduct(models.Model):
 
     def __str__(self):
         return self.product.name
-    
+
+RATE_CHOICES = [
+    (5, 'Отлично'),
+    (4, 'Хорошо'),
+    (3, 'Нормально'),
+    (2, 'Плохо'),
+    (1, 'Ужасно'),
+  
+]  
+
+class Review(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    text = models.TextField(blank=True)
+    rating = models.PositiveSmallIntegerField(choices=RATE_CHOICES)
+
+    def __str__(self):
+        return f'{self.customer.username} о {self.product.name}'
 

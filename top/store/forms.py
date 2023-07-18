@@ -1,6 +1,6 @@
 from django import forms
 from .bulma_mixin import BulmaMixin
-from .models import Order
+from .models import *
 
 class OrderForm(BulmaMixin, forms.ModelForm):
     address = forms.CharField(widget=forms.TextInput(attrs={
@@ -13,3 +13,16 @@ class OrderForm(BulmaMixin, forms.ModelForm):
     class Meta:
         model = Order
         fields = ['address', 'phone']
+
+class RateForm(forms.ModelForm):
+    text = forms.CharField(widget=forms.Textarea(
+        attrs={'class':'textarea'}
+    ), label='Можете оставить ваш отзыв здесь')
+    rating = forms.ChoiceField(choices=RATE_CHOICES, required=True,
+                               label='Оцените продукт')
+    
+    class Meta:
+        model = Review
+        fields =['text', 'rating']
+
+    
