@@ -11,6 +11,11 @@ def home(request):
     category = request.GET.get('category')
     brand = request.GET.get('brand')
 
+    action = request.GET.get('action')
+    if action:
+        favorite(request)
+        return redirect('store:home')
+
     products = products.filter(category=category) \
         if category else products
     products = products.filter(brand=brand) \
@@ -20,6 +25,10 @@ def home(request):
 
 def product(request, pk):
     product_data = Product.objects.get(pk=pk)
+    action = request.GET.get('action')
+    if action:
+        favorite(request,pk)
+        return redirect('store:product', pk=pk)
     return render(request, 'product.html', {'product': product_data})
 
 
@@ -33,13 +42,13 @@ def guest_register(request, pk):
 
     cart_item = CartItem.objects.filter(
         product=pk,
-        guest=guest[0],
+        guest=guest[0] if request.user.is_anonymous else None,
         customer=request.user if request.user.is_authenticated else None
         )
 
     if not cart_item:
         CartItem.objects.create(
-            guest=guest[0] if request.user.is_anonymous else None,
+            guest=guest[0],
             product=Product.objects.get(pk=pk),
             quantity=1,
             customer=request.user if request.user.is_authenticated else None
@@ -63,6 +72,9 @@ def cart(request):
         confirm_delete = True
     elif action == 'increment' or action == 'decrement':
         edit_cart(action, cart_item_pk)
+        return redirect('store:cart')
+    elif action == 'favorite':
+        favorite(request)
         return redirect('store:cart')
 
 
@@ -132,5 +144,19 @@ def create_order(request):
                    'form': form
                    })
 
+def favorite(request, pk=None):
+    product_pk = request.GET.get('product') if not pk else pk
+    product_detail = Product.objects.get(pk=product_pk)
+    product_detail.favorite.add(request.user) \
+        if request.user not in product_detail.favorite.all() \
+        else product_detail.favorite.remove(request.user)
+
    
-        
+def favorite_page(request):
+    favorite_products = Product.objects.filter(favorite=request.user)
+    action = request.GET.get('action')
+    if action:
+        favorite(request)
+        return redirect('store:favorite')
+    
+    return render(request, 'favorite.html', {'favorites':favorite_products})  

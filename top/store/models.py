@@ -33,6 +33,8 @@ class Product(models.Model):
     category = models.ForeignKey('store.Category', on_delete=models.CASCADE)
     brand = models.ForeignKey('store.Brand', on_delete=models.CASCADE)
     image = models.ImageField(default='default.png')
+    favorite = models.ManyToManyField(User, related_name='favorite_products')
+    
 
     def __str__(self):
         return self.name
@@ -51,6 +53,7 @@ class CartItem(models.Model):
         'store.Guest', on_delete=models.CASCADE, null=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
+    chosen = models.BooleanField(default=False)
 
     def __str__(self):
         return self.product.name
@@ -83,3 +86,4 @@ class OrderProduct(models.Model):
     def __str__(self):
         return self.product.name
     
+

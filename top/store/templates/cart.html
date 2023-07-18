@@ -21,18 +21,35 @@
                     <button class="modal-close is-large"></button>
                 </div>
                 <div class="columns">
+                    <div class="column is-1">
+                        {% if item.chosen %}
+                        <a href="{% url 'store:cart' %}">
+                            <ion-icon name="checkbox-outline"></ion-icon>
+                        </a>
+                        {% else %}
+                        <a href="{% url 'store:cart' %}">
+                            <ion-icon name="square-outline"></ion-icon>
+                        </a>
+                        {% endif %}
+                    </div>
                     <div class="column is-2">
                         <figure class="image is-128x128">
                             <img src="{{item.product.image.url}}">
                         </figure>
                     </div>
                     <div class="column is-4">
-                        <div class="title is-5">{{ item.product.name }}</div>
+                        <div class="title is-3">{{ item.product.name }}</div>
                         <div class="subtitle is-7 has-text-grey">
                             {{item.product.category}}
                         </div>
                         <div class="buttons">
-                            <button class="button">В избранное</button>
+                            {% if user not in item.product.favorite.all %}
+                                <a href="{% url 'store:cart' %}?action=favorite&product={{item.product.pk}}" class="button"><ion-icon name="heart-outline"></ion-icon></a>
+                                
+                            {% else %}
+                                <a href="{% url 'store:cart' %}?action=favorite&product={{item.product.pk}}" class="button is-link"><ion-icon name="heart"></ion-icon></a>
+                                
+                            {% endif %}
                             <a href="{% url 'store:cart' %}?action=delete" class="button is-danger">Удалить</a>
                         </div>
                     </div>
@@ -72,11 +89,11 @@
                     <div class="title is-5">Ваши товары</div>
                     <div class="subtitle is-6 is-flex is-justify-content-space-between">
                         <span>Товары</span>
-                        <span>(общее количество товаров)</span>
+                        <span>{{total_quantity}}</span>
                     </div>
                     <div class="subtitle is-6 is-flex is-justify-content-space-between">
                         <span>Общая сумма</span>
-                        <span>1231232</span>
+                        <span>{{total_sum}}</span>
                     </div>
                 </div>
                 {% if cart_items %}
