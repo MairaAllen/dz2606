@@ -3,6 +3,7 @@
 {% load brand %}
 
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,90 +14,94 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/css/bulma-carousel.min.css">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
 </head>
+
 <body>
-<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand has-text-weight-bold has-text-white">
-    <a class="navbar-item" href="{% url 'store:home' %}">
-      <ion-icon name="flower-outline"></ion-icon>
-        YOUR GARDEN
-      <ion-icon name="flower-outline"></ion-icon>
-    </a>
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-    <div id="navbarBasicExample" class="navbar-menu">
-      {% csrf_token %}
-      <div class="navbar-start" title="на главную">
-            <a href="{% url 'store:home' %}" class="navbar-item">
-                <ion-icon name="home-outline"></ion-icon>
-            </a>
-            <div class="navbar-item has-dropdown is-hoverable">
-              <a class="navbar-link">
-                Каталог
-              </a>
-              <div class="navbar-dropdown">
-                <a class="navbar-item">
-                  {% categories %}
-                </a>
-              </div>
-            
-            </div>
-          </div>
-      
-        <div class="navbar-end">
-          <span class="navbar-item">
-            <form method="get" action="/store/home/">
-              <div class="field has-addons mt-4">
-                <div class="control">
-                  <input class="input" type="search" name="search">
-                </div>
-                <div class="control">
-                  <button class="button" type="submit"><ion-icon name="search"></ion-icon>
-                </div>
-              </div>
-            </form>
-          </span>
-        
-          <a class="navbar-item is-size-3" href="{% url 'store:cart' %}">
-            <ion-icon name="cart-outline"></ion-icon>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand has-text-weight-bold has-text-white">
+          <a class="navbar-item" href="{% url 'store:home' %}">
+            <ion-icon name="flower-outline"></ion-icon>
+              YOUR GARDEN
+            <ion-icon name="flower-outline"></ion-icon>
           </a>
-          <div class="navbar-item has-dropdown is-hoverable">
-            <div class="navbar-link">
-              {{ user }}
-            </div>
-              <div class="navbar-dropdown">
-                <a class="navbar-item has-text-danger" 
-                     href="{% url 'users:sign_out' %}">
-                  Выйти
-                </a>
-              </div>
-            </div>
-            
         </div>
-    </div>
-  </nav>
-      
-{% block auth %}
-{% endblock %}
+        <div class="navbar-menu">
+            <div class="navbar-start" title="на главную">
+                <a href="{% url 'store:home' %}" class="navbar-item">
+                    <ion-icon name="home-outline"></ion-icon>
+                </a>
+                <div class="navbar-item has-dropdown is-hoverable">
+                  <a class="navbar-link">
+                    Каталог
+                  </a>
+                  <div class="navbar-dropdown">
+                    <a class="navbar-item">
+                      {% categories %}
+                    </a>
+                  </div>
+    
+                </div>
+            </div>
+            {% csrf_token %}
+            
+            <div class="navbar-end">
+                <div class="container">
+                    <form method="get" action="/store/home/">
+                      <div class="field has-addons mt-4">
+                        <div class="control">
+                          <input class="input" type="search" name="search">
+                        </div>
+                        <div class="control">
+                          <button class="button" type="submit"><ion-icon name="search"></ion-icon>
+                        </div>
+                      </div>
+                    </form>
+                </div>
 
-{% block slider %}
-{% endblock %}
+                {% if user.is_authenticated %}
+                <a class="navbar-item has-text-white is-size-3" href="{% url 'store:cart' %}">
+                    <ion-icon name="cart-outline"></ion-icon>
+                </a>
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <div class="navbar-link">
+                        {{ user }}
+                    </div>
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item has-text-danger" href="{% url 'users:edit_profile' %}">
+                              Редактировать <br>
+                              профиль
+                        </a>
+                        <a class="navbar-item has-text-danger" href="{% url 'users:sign_out' %}">
+                              Выйти
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <a class="navbar-item" href="{% url 'users:sign_in' %}">
+                    <button class="button">Войти</button>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    {% block auth %}
+    {% endblock %}
 
-{% block content %}
-{% endblock %}
+    {% block slider %}
+    {% endblock %}
 
+    {% block content %}
+    {% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/js/bulma-carousel.min.js"></script>
     <script>
-      bulmaCarousel.attach('#carousel-demo',{
-          slidesToScroll: 1,
-          slidesToShow: 1,
-          infinite: true,
-          duration: 300
-      })
+        bulmaCarousel.attach('#carousel-demo', {
+            slidesToScroll: 1,
+            slidesToShow: 1,
+            autoplay: true,
+            autoplaySpeed: 1000,
+        })
     </script>
 </body>
+
 </html>

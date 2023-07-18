@@ -1,7 +1,6 @@
 {% extends 'base_layout.html' %}
 
 {% block content %}
-
 <section class="section product-detail">
     <div class="columns">
         <div class="column">
@@ -11,56 +10,56 @@
                 </figure>
             </div>
         </div>
-        <div class="column is-flex is-flex-direction-column is-jastify-content-space-evenly">
+        <div class="column is-flex is-flex-direction-column is-justify-content-space-evenly">
             <div>
                 <div class="title">
-                    <div class="container tag-danger"></div>
-                    {{ product.name }}
+                    {{product.name}}
                     {% if product.is_new %}
-                    <span class="tag-danger">Новинка!</span>
+                    <span class="tag is-danger">Новинка!</span>
                     {% endif %}
+
                     {% if product.is_discounted %}
-                    <span class="tag-primary">Скидка!</span>
+                    <span class="tag is-primary">Скидка!</span>
                     {% endif %}
                 </div>
                 <div class="subtitle is-flex mt-4">
                     <span class="mr-6">0 отзывов</span>
-                    <span class="is-size-4 mx-3">
-                    <a href="#">
-                        <ion-icon name="logo-youtube" class="order"></ion-icon>
-                    </a>
-                    <a href="#">
-                        <ion-icon name="logo-whatsapp" class="order"></ion-icon>
-                    </a>
-                    <a href="#">
-                        <ion-icon name="logo-github" class="order"></ion-icon>
-                    </a>
+                    <span class="is-size-4 mx-3 ">
+                        <a href="#">
+                            <ion-icon name="logo-whatsapp" class="order" style="color: green;"></ion-icon>
+                        </a>
+                        <a href="#">
+                            <ion-icon name="logo-youtube" class="order" style="color: red;"></ion-icon>
+                        </a>
+                        <a href="#">
+                            <ion-icon name="logo-github" class="order" style="color: black;"></ion-icon>
+                        </a>
                     </span>
                 </div>
             </div>
-            <div class=" columns is-vcentered">
+            <div class="columns is-vcentered">
                 <div class="column is-8">
                     <div class="message">
                         <div class="message-body">
                             <div class="title is-5 my-3">Характеристики</div>
-                            {{ product.discription }}
+                            {{ product.description }}
                         </div>
                     </div>
                 </div>
-           </div>
-           
-        </div>
-        <div class="column has-text-centered">
-            <div class="message">
-                <div class="message-body">
-                    <div class="title">
-                        {{product.price}} рублей
+                <div class="column has-text-centered">
+                    <div class="message">
+                        <div class="message-body">
+                            <div class="title">
+                                {{product.price}} рублей
+                            </div>
+                            <a class="button is-outlined is-dark">
+                                Добавить в корзину
+                            </a>
+                        </div>
                     </div>
-                    <button class="button is-outlined id-dark">
-                        Добавить в корзину
-                    </button>
                 </div>
             </div>
+
         </div>
     </div>
 </section>
