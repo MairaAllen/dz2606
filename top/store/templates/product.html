@@ -26,13 +26,13 @@
                     <span class="mr-6">0 отзывов</span>
                     <span class="is-size-4 mx-3 ">
                         <a href="#">
-                            <ion-icon name="logo-whatsapp" class="order" style="color: green"></ion-icon>
+                            <ion-icon name="logo-whatsapp" class="order"></ion-icon>
                         </a>
                         <a href="#">
-                            <ion-icon name="logo-youtube" class="order" style="color: red;"></ion-icon>
+                            <ion-icon name="logo-youtube" class="order"></ion-icon>
                         </a>
                         <a href="#">
-                            <ion-icon name="logo-github" class="order" style="color: black;"></ion-icon>
+                            <ion-icon name="logo-github" class="order"></ion-icon>
                         </a>
                     </span>
                 </div>
@@ -53,24 +53,56 @@
                                 {{product.price}} рублей
                             </div>
                             <div class="buttons is-centered">
-                            <a class="button is-small">
-                                <ion-icon name="cart" class="mr-1"></ion-icon>
-                                Добавить в корзину
-                            </a>
-                            {% if user not in product.favorite.all %}
-                            <a href="{% url 'store:product' product.pk %}?action=favorite" class="button is-small"><ion-icon name="heart-outline"></ion-icon></a>
-                            
-                            {% else %}
-                            <a href="{% url 'store:product' product.pk %}?action=favorite" class="button is-small"><ion-icon name="heart" class="has-text-danger"></ion-icon></a>
-                            
-                            {% endif %}
+                                <a class="button is-small" href="{% url 'store:guest_register' product.pk %}?pk={{ product.pk }}"> 
+                                    <ion-icon name="cart" class="mr-1"></ion-icon>
+                                </a>
+                                {% if user not in product.favorite.all %}
+                                <a href="{% url 'store:product' product.pk %}?action=favorite" class="button is-small">
+                                    <ion-icon name="heart-outline"></ion-icon>
+                                </a>
+                                {% else %}
+                                <a href="{% url 'store:product' product.pk %}?action=favorite" class="button is-small">
+                                    <ion-icon name="heart" class="has-text-danger"></ion-icon>
+                                </a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
+    </div>
+    <div class="box">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+
+            {% if field.name == 'rating' %}
+            <div class="field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <div class="control">
+                    <div class="select">
+                        {{field}}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="field">
+                <label for="{{field.id_for_label}}" class="label">
+                    {{field.label}}
+                </label>
+                <div class="control">
+                    {{field}}
+                </div>
+            </div>
+            {% endif %}
+
+
+            {% endfor %}
+            <button class="button is-success">
+                Отправить
+            </button>
+        </form>
     </div>
 </section>
 {% endblock %}

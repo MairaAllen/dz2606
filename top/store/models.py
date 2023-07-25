@@ -34,7 +34,6 @@ class Product(models.Model):
     brand = models.ForeignKey('store.Brand', on_delete=models.CASCADE)
     image = models.ImageField(default='default.png')
     favorite = models.ManyToManyField(User, related_name='favorite_products')
-    
 
     def __str__(self):
         return self.name
@@ -68,22 +67,26 @@ class Guest(models.Model):
     class Meta:
         db_table = 'guests'
 
+
 class Order(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.CharField(max_length=255)
-    phone = models.CharField(max_length=11)
+    phone = models.CharField(max_length=255)
     total_price = models.IntegerField()
 
     def __str__(self):
         return f"Заказ №{self.pk}"
-    
+
     def order_products_list(self):
-        return', '.join(
-            [f'{order.product.name}  {order.amount} шт' for order in self.order_products.all()]
+        return ', '.join(
+            [f'{order.product.name} {order.amount} шт'
+             for order in self.order_products.all()]
         )
-    
+
+
 class OrderProduct(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE,related_name='order_products')
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name='order_products')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     amount = models.IntegerField()
     total = models.IntegerField()
@@ -91,14 +94,14 @@ class OrderProduct(models.Model):
     def __str__(self):
         return self.product.name
 
+
 RATE_CHOICES = [
     (5, 'Отлично'),
     (4, 'Хорошо'),
     (3, 'Нормально'),
     (2, 'Плохо'),
     (1, 'Ужасно'),
-  
-]  
+]
 
 class Review(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -109,4 +112,3 @@ class Review(models.Model):
 
     def __str__(self):
         return f'{self.customer.username} о {self.product.name}'
-

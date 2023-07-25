@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from .models import *
-from django.http import HttpResponse
 from .forms import OrderForm, RateForm
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 
 def home(request):
@@ -20,14 +20,26 @@ def home(request):
         if category else products
     products = products.filter(brand=brand) \
         if brand else products
-    return render(request, 'home.html', {'products': products, 'slides': slides})
+
+    amount = show_amount(request)
+
+    pages = Paginator(products, 6)
+    page = request.GET.get('page')
+    products = pages.get_page(page)
+    products_pages = products.paginator.get_elided_page_range(products.number, on_each_side=2, on_ends=1)
+
+    return render(request, 'home.html',
+                  {'products': products,
+                   'slides': slides,
+                   'amount': amount,
+                   'products_pages':products_pages})
 
 
 def product(request, pk):
     product_data = Product.objects.get(pk=pk)
     action = request.GET.get('action')
 
-#система отзыва
+    # система отзыва
     form = RateForm(request.POST or None)
 
     if form.is_valid():
@@ -38,9 +50,12 @@ def product(request, pk):
         return redirect('store:product', pk=product_data.pk)
 
     if action:
-        favorite(request,pk)
+        favorite(request, pk)
         return redirect('store:product', pk=pk)
-    return render(request, 'product.html', {'product': product_data, 'form':form})
+
+    amount = show_amount(request)
+    return render(request, 'product.html',
+                  {'product': product_data, 'form': form, 'amount': amount})
 
 
 def guest_register(request, pk):
@@ -55,11 +70,11 @@ def guest_register(request, pk):
         product=pk,
         guest=guest[0] if request.user.is_anonymous else None,
         customer=request.user if request.user.is_authenticated else None
-        )
+    )
 
     if not cart_item:
         CartItem.objects.create(
-            guest=guest[0],
+            guest=guest[0] if request.user.is_anonymous else None,
             product=Product.objects.get(pk=pk),
             quantity=1,
             customer=request.user if request.user.is_authenticated else None
@@ -69,12 +84,15 @@ def guest_register(request, pk):
         cart_item[0].quantity += 1
         cart_item[0].save()
 
-    return redirect('store:home')
+    pk = request.GET.get('pk')
+    return redirect('store:home') \
+        if not pk else redirect('store:product', pk=pk)
 
 
 def cart(request):
     token = request.COOKIES['csrftoken']
     guest = Guest.objects.filter(token=token)
+
     action = request.GET.get('action')
     cart_item_pk = request.GET.get('pk')
     confirm_delete = False
@@ -87,10 +105,12 @@ def cart(request):
     elif action == 'favorite':
         favorite(request)
         return redirect('store:cart')
-
+    elif action == 'add_chosen':
+        CartItem.objects.filter(pk=cart_item_pk).update(chosen=True)
+    elif action == 'remove_chosen':
+        CartItem.objects.filter(pk=cart_item_pk).update(chosen=False)
 
     if request.GET.get('confirm'):
-        confirm_delete = True
         CartItem.objects.get(pk=cart_item_pk).delete()
         return redirect('store:cart')
 
@@ -99,14 +119,19 @@ def cart(request):
     else:
         cart_items = CartItem.objects.filter(guest=guest[0]) if guest else []
 
-    total_quantity = sum([i.quantity for i in cart_items])
-    total_sum = sum([i.total_price() for i in cart_items])
+    chosen_items = cart_items.filter(chosen=True)
+    total_quantity = sum([i.quantity for i in chosen_items])
+    total_sum = sum([i.total_price() for i in chosen_items])
 
-    return render(request, 'cart.html', {'cart_items': cart_items, 
-                                         'confirm_delete': confirm_delete, 
-                                         'total_quantity': total_quantity, 
-                                         'total_sum': total_sum}
-                                         )
+    return render(request,
+                  'cart.html',
+                  {'cart_items': cart_items,
+                   'confirm_delete': confirm_delete,
+                   'total_quantity': total_quantity,
+                   'total_sum': total_sum,
+                   'chosen_items': chosen_items
+                   })
+
 
 def edit_cart(action, pk):
     cart_item = CartItem.objects.get(pk=pk)
@@ -115,14 +140,13 @@ def edit_cart(action, pk):
         cart_item.save()
 
     if action == 'decrement' and cart_item.quantity > 1:
-        cart_item.quantity -=1
+        cart_item.quantity -= 1
         cart_item.save()
+
 
 @login_required(login_url='/users/sign_in/')
 def create_order(request):
-
-
-    cart_items = CartItem.objects.filter(customer=request.user)
+    cart_items = CartItem.objects.filter(customer=request.user, chosen=True)
     if not cart_items:
         return render(request, 'error.html', {})
 
@@ -130,7 +154,7 @@ def create_order(request):
     amount = sum(item.quantity for item in cart_items)
 
     form = OrderForm(request.POST or None)
-    
+
     if form.is_valid():
         order = Order.objects.create(
             address=request.POST.get('address'),
@@ -140,14 +164,13 @@ def create_order(request):
         )
         for item in cart_items:
             OrderProduct.objects.create(
-                order=order, 
+                order=order,
                 product=item.product,
                 amount=item.quantity,
                 total=item.total_price()
-                )
+            )
         cart_items.delete()
         return redirect('store:home')
-    
     return render(request, 'order_create.html',
                   {'cart_items': cart_items,
                    'total_price': total_price,
@@ -155,26 +178,43 @@ def create_order(request):
                    'form': form
                    })
 
+
 def favorite(request, pk=None):
     product_pk = request.GET.get('product') if not pk else pk
+
     product_detail = Product.objects.get(pk=product_pk)
     product_detail.favorite.add(request.user) \
         if request.user not in product_detail.favorite.all() \
         else product_detail.favorite.remove(request.user)
 
-   
+
 def favorite_page(request):
     favorite_products = Product.objects.filter(favorite=request.user)
     action = request.GET.get('action')
     if action:
         favorite(request)
         return redirect('store:favorite')
-    
-    return render(request, 'favorite.html', {'favorites':favorite_products})  
+
+    amount = show_amount(request)
+    return render(request, 'favorite.html',
+                  {'favorites': favorite_products, 'amount': amount})
+
 
 def orders(request):
     orders_list = Order.objects.filter(customer=request.user)
-    return render(request, 'orders.html', {'orders': orders_list})
+    amount = show_amount(request)
+    return render(request, 'orders.html', {'orders': orders_list, 'amount': amount})
 
 
-   
+def show_amount(request):
+    token = request.COOKIES.get('csrftoken')
+    guest = Guest.objects.filter(token=token).last()
+    print(guest)
+
+    cart_items = CartItem.objects.filter(
+        customer=request.user
+        if request.user.is_authenticated else None,
+        guest=guest if request.user.is_anonymous else None
+    )
+
+    return sum([i.quantity for i in cart_items])

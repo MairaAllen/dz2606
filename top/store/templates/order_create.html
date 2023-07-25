@@ -18,19 +18,20 @@
                     <button class="button is-success">
                         Отправить
                     </button>
-                    <div><a href="{% url 'store:cart' %}" class="button is-warning">Назад</a></div>
                 </form>
             </div>
         </div>
         <div class="column">
             <div class="box">
-                
+                <a href="{% url 'store:cart' %}" class="button is-warning">
+                    Назад
+                </a>
                 <hr>
                 <div class="title">Информация о заказе</div>
                 <table class="table is-fullwidth is-striped">
                     <thead>
                         <tr>
-                            <th>№</th>
+                            <th></th>
                             <th>Продукт</th>
                             <th>Цена</th>
                             <th>Кол-во</th>
@@ -41,7 +42,7 @@
                         {% for item in cart_items %}
                         <tr>
                             <td>
-                                <img src="{{ item.product.image.url }}" alt="" wigth="'50" height="'50">
+                                <img src="{{ item.product.image.url }}" width="50" height="50">
                             </td>
                             <td>{{ item.product }}</td>
                             <td>{{ item.product.price }} рублей</td>
@@ -51,8 +52,8 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                <div class="title has-text-centered" >
-                    Сумма:{{ total_price }} рублей
+                <div class="title has-text-centered">
+                    Сумма: {{ total_price }} рублей
                 </div>
             </div>
         </div>

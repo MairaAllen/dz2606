@@ -14,42 +14,46 @@
 {% endblock %}
 
 {% block content %}
-<div class="columns mt-2">
-    <div class="column is-one-fifth">
-        {% brands %}
-    </div>
-    <div class="container">
-        <div class="columns is-multiline is-centered">
-            {% for product in products %}
-            <div class="column is-3 has-text-centered">
-                <div class="card has-text-centered">
-                    <div class="card content">
-
-                            <div class="card-image">
-                                <a href="{% url 'store:product' product.pk %}">
-                                    <figure class="image">
-                                        <img src="{{ product.image.url }}" alt="">
-                                    </figure>
-                                </a>
-                                {% if product.is_new %}
-                                <span class="tag is-danger">
-                                    Новинка!
-                                </span>
+<div class="container" style="background-color: lightgreen; max-width: 100%; height: 100%;">
+    <div class="columns mt-2">
+        <div class="column is-one-fifth">
+            {% brands %}
+        </div>
+        <div class="column">
+            <div class="columns is-multiline is-centered">
+                {% for product in products %}
+                <div class="column is-4">
+                    <div class="card">
+                        <div class="card-image">
+                            
+                            <a href="{% url 'store:product' product.pk %}">
+                                <figure class="image is-128x128">
+                                    <img class="is-rounded" src="{{ product.image.url }}" alt="">
+                                </figure>
+                                {% if product.is_new or product.is_discounted %}
+                                    <span class="tag is-danger">
+                                        Новинка!
+                                    </span>
+                                    <span class="tag is-primary">
+                                        Скидка!
+                                    </span>
+                                {% else %}
+                                <br>
                                 {% endif %}
-
-                                {% if product.is_discounted %}
-                                <span class="tag is-primary">
-                                    Скидка!
-                                </span>
-                                {% endif %}
-                            </div>
-
+                                </a>  
+                        </div>
                         <div class="card-content">
-                            <div class="title is-size-6">{{ product }}</div>
+                            <div class="media">
+                                <div class="media-content">
+                                    <div class="title is-4">{{ product }}</div>
+                                </div>
+                            </div>
                             <div class="columns is-vcentered">
+                       
                                 <div class="column">
-                                    <div class="content">
-                                        {{ product.price }} рублей
+                                    
+                                    <div class="content has-text-weight-bold">
+                                        {{ product.price }} рублей      
                                     </div>
                                 </div>
                                 <div class="column has-text-right">
@@ -59,27 +63,45 @@
                                 </div>
                                 <div class="column is-2">
                                     {% if user not in product.favorite.all %}
-                                    <a href="{% url 'store:home' %}?action=favorite&product={{product.pk}}"><ion-icon name="heart" class="order"></ion-icon></a>
-                                    
+                                    <a href="{% url 'store:home' %}?action=favorite&product={{product.pk}}" >
+                                        <ion-icon name="heart-outline" class="order"></ion-icon>
+                                    </a>
                                     {% else %}
-                                    <a href="{% url 'store:home' %}?action=favorite&product={{product.pk}}"><ion-icon name="heart" class="order has-text-danger"></ion-icon></a>
-                                    
+                                    <a href="{% url 'store:home' %}?action=favorite&product={{product.pk}}"> 
+                                        <ion-icon name="heart" class="order has-text-danger"></ion-icon>
+                                    </a>
                                     {% endif %}
                                 </div>
                             </div>
-
-
                         </div>
-
-
-
+    
                     </div>
                 </div>
-
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
     </div>
+    {% if products.has_other_pages %}
+    <nav class="pagination is-centered has-text-danger">
+        {% if products.has_previous %}
+        <a class="pagination-previous has-text-white" href="?page={{ products.previous_page_number }}">Предыдущая страница</a>
+        {% else %}
+        <button class="pagination-previous has-text-white" disabled>Предыдущая страница</button>
+        {% endif %}
+        {% if products.has_next %}
+        <a class="pagination-next has-text-white" href="?page={{ products.next_page_number }}">Следующая страница</a>
+        {% else %}
+        <button class="pagination-next has-text-white" disabled>Следующая страница</button>
+        {% endif %}
+
+        <ul class="pagination-list">
+            {% for page in post_pages %}
+            <li>
+                <a class="pagination-link {% if page == products.number %} is-current {% endif %}" href="?page={{page}}">{{ page }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
+    {% endif %}
 </div>
 {% endblock %}
-

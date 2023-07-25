@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="section">
-    <div class="columns">
+    <div class="columns ">
         <div class="column is-8">
             <div class="box">
                 {% for item in cart_items %}
@@ -13,9 +13,10 @@
                             <div class="title">
                                 Подтвердите удаление
                             </div>
-                            <a class="button is-success"
-                                href="{% url 'store:cart' %}?confirm=True&pk={{item.pk}}">Подтвердить</a>
-                            <button class="button">Отмена</button>
+                            <a class="button is-success" href="{% url 'store:cart' %}?confirm=True&pk={{item.pk}}">
+                                Подтвердить
+                            </a>
+                            <button class="button is-danger">Отмена</button>
                         </div>
                     </div>
                     <button class="modal-close is-large"></button>
@@ -23,11 +24,11 @@
                 <div class="columns">
                     <div class="column is-1">
                         {% if item.chosen %}
-                        <a href="{% url 'store:cart' %}">
+                        <a href="{% url 'store:cart' %}?action=remove_chosen&pk={{ item.pk }}">
                             <ion-icon name="checkbox-outline"></ion-icon>
                         </a>
                         {% else %}
-                        <a href="{% url 'store:cart' %}">
+                        <a href="{% url 'store:cart' %}?action=add_chosen&pk={{ item.pk }}">
                             <ion-icon name="square-outline"></ion-icon>
                         </a>
                         {% endif %}
@@ -44,11 +45,14 @@
                         </div>
                         <div class="buttons">
                             {% if user not in item.product.favorite.all %}
-                                <a href="{% url 'store:cart' %}?action=favorite&product={{item.product.pk}}" class="button"><ion-icon name="heart-outline"></ion-icon></a>
-                                
+                            <a href="{% url 'store:cart' %}?action=favorite&product={{item.product.pk}}" class="button">
+                                <ion-icon name="heart-outline"></ion-icon>
+                            </a>
                             {% else %}
-                                <a href="{% url 'store:cart' %}?action=favorite&product={{item.product.pk}}" class="button is-link"><ion-icon name="heart"></ion-icon></a>
-                                
+                            <a href="{% url 'store:cart' %}?action=favorite&product={{item.product.pk}}"
+                                class="button is-link">
+                                <ion-icon name="heart-outline"></ion-icon>
+                            </a>
                             {% endif %}
                             <a href="{% url 'store:cart' %}?action=delete" class="button is-danger">Удалить</a>
                         </div>
@@ -59,7 +63,7 @@
                     <div class="column">
                         <div class="field has-addons">
                             <div class="control">
-                                <a href="{% url 'store:cart' %}?action=decrement&pk={{item.pk}}" class="button" {% if item.quantity == 1 %} disabled {% endif %}>
+                                <a href="{% url 'store:cart' %}?action=decrement&pk={{item.pk}}" class="button">
                                     <div class="title is-3">-</div>
                                 </a>
                             </div>
@@ -69,7 +73,7 @@
                                 </button>
                             </div>
                             <div class="control">
-                                <a href="{% url 'store:cart' %}?action=increment&pk={{item.pk}}" class="button">
+                                <a class="button" href="{% url 'store:cart' %}?action=increment&pk={{item.pk}}">
                                     <div class="title is-3">+</div>
                                 </a>
                             </div>
@@ -79,28 +83,26 @@
                 <hr>
                 {% endfor %}
             </div>
-
         </div>
         <div class="column">
             <div class="box">
-                
-                <hr>
-                <div class="block">
-                    <div class="title is-5">Ваши товары</div>
-                    <div class="subtitle is-6 is-flex is-justify-content-space-between">
-                        <span>Товары</span>
-                        <span>{{total_quantity}}</span>
-                    </div>
-                    <div class="subtitle is-6 is-flex is-justify-content-space-between">
-                        <span>Общая сумма</span>
-                        <span>{{total_sum}}</span>
-                    </div>
-                </div>
-                {% if cart_items %}
+                {% if chosen_items %}
                 <a class="button is-success is-fullwidth" href="{% url 'store:create_order' %}">
                     Перейти к оформлению
                 </a>
                 {% endif %}
+                <hr>
+                <div class="block">
+                    <div class="title is-5">Ваши товары</div>
+                    <div class="subtitle is-6">
+                        <span>Товары {{total_quantity}} шт</span>
+                    </div>
+                    <hr>
+                    <div class="title is-5 is-flex is-justify-content-space-between">
+                        <span>Общая сумма</span>
+                        <span>{{total_sum}} р</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

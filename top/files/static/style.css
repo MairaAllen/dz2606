@@ -11,10 +11,11 @@
     height: 50vh;
     object-fit: cover;
 }
+
 .order {
-    font-size: 30px;
+    font-size: 25px;
     cursor: pointer;
-    color: gray;
+    color: grey;
     transition: .5s;
 }
 
@@ -30,7 +31,7 @@
 }
 
 .product-detail {
-    background: whitesmoke;
+    background: #fbfbfb;
     border-radius: 10px;
     margin: 20px;
     border: 1px solid #f8f8f8;
@@ -39,7 +40,3 @@
 .product-detail img:hover {
     transform: scale(1.05);
 }
-/* .image {
-    width: 200px;
-    height: 200px;
-} */

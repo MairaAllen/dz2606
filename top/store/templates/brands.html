@@ -1,7 +1,10 @@
-<div class="title is-size-5 has-text-centered">
-    Брэнды
+<div class="menu-label">
+    <div class="title is-size-6">
+        Производители
+    </div>
 </div>
 {% for brand in brands %}
+
 <a href='{% url "store:home" %}?brand={{ brand.pk }}' 
 class='navbar-item'>
     {{brand}}
